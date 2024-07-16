@@ -1,7 +1,7 @@
 ManifestFileVersion: 0
-CRC: 474389615
+CRC: 3600548803
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: morebossitems
+      Name: morebossitems_assets
       Dependencies: {}

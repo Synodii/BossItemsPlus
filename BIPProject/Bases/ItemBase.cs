@@ -3,6 +3,7 @@ using MonoMod.Cil;
 using R2API;
 using RoR2;
 using System;
+using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +20,6 @@ namespace BossItemsPlus.Bases
 
     public abstract class ItemBase<T> : ItemBase where T : ItemBase<T>
     {
-        //This, which you will see on all the -base classes, will allow both you and other modders to enter through any class with this to access internal fields/properties/etc as if they were a member inheriting this -Base too from this class.
         public static T instance { get; private set; }
 
         public ItemBase()

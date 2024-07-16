@@ -5,13 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assetbundle\morebossitems" />
-    <None Remove="build\morebossitems" />
+    <None Remove="morebossitems_assets" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Assetbundle\morebossitems" />
-    <EmbeddedResource Include="build\morebossitems" />
+    <EmbeddedResource Include="morebossitems_assets" />
   </ItemGroup>
 
   <ItemGroup>
