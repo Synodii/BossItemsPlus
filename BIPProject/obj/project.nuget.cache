@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "1UpUqB42DUxsZuyfNJv2ellPexsrIoQhW4sDzbKzh2PBjaOlgJE2MbzIk0Ug2L+rHp1Znbpyg2MM33HJpc4o4Q==",
+  "dgSpecHash": "MqPpizFBsdffRhL9KjWShd8UNVKLRG+PGja9jVS6PjNxy00xDOkGl6uOQp0EQIRfBmxSu9YRUAuZRmnlDOJtZw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Computer\\source\\repos\\BossItemsPlus\\BossItemsPlus.csproj",
+  "projectFilePath": "C:\\Users\\Computer\\source\\repos\\BossItemsPlusGitRepo\\BIPProject\\BossItemsPlus.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Computer\\.nuget\\packages\\bepinex.baselib\\5.4.19\\bepinex.baselib.5.4.19.nupkg.sha512",
     "C:\\Users\\Computer\\.nuget\\packages\\bepinex.core\\5.4.19\\bepinex.core.5.4.19.nupkg.sha512",

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BossItemsPlus")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+632b5758324999258cfee3a7b855fadda037fa51")]
 [assembly: System.Reflection.AssemblyProductAttribute("BossItemsPlus")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BossItemsPlus")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

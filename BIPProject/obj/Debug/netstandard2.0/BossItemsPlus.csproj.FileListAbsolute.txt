@@ -8,3 +8,14 @@ C:\Users\Computer\source\repos\BossItemsPlus\obj\Debug\netstandard2.0\BossItemsP
 C:\Users\Computer\source\repos\BossItemsPlus\obj\Debug\netstandard2.0\BossItemsPlus.csproj.CoreCompileInputs.cache
 C:\Users\Computer\source\repos\BossItemsPlus\obj\Debug\netstandard2.0\BossItemsPlus.dll
 C:\Users\Computer\source\repos\BossItemsPlus\obj\Debug\netstandard2.0\BossItemsPlus.pdb
+C:\Users\Computer\source\repos\BossItemsPlusGitRepo\BIPProject\bin\Debug\netstandard2.0\BossItemsPlus.deps.json
+C:\Users\Computer\source\repos\BossItemsPlusGitRepo\BIPProject\bin\Debug\netstandard2.0\BossItemsPlus.dll
+C:\Users\Computer\source\repos\BossItemsPlusGitRepo\BIPProject\bin\Debug\netstandard2.0\BossItemsPlus.pdb
+C:\Users\Computer\source\repos\BossItemsPlusGitRepo\BIPProject\obj\Debug\netstandard2.0\BossItemsPlus.csproj.AssemblyReference.cache
+C:\Users\Computer\source\repos\BossItemsPlusGitRepo\BIPProject\obj\Debug\netstandard2.0\BossItemsPlus.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Computer\source\repos\BossItemsPlusGitRepo\BIPProject\obj\Debug\netstandard2.0\BossItemsPlus.AssemblyInfoInputs.cache
+C:\Users\Computer\source\repos\BossItemsPlusGitRepo\BIPProject\obj\Debug\netstandard2.0\BossItemsPlus.AssemblyInfo.cs
+C:\Users\Computer\source\repos\BossItemsPlusGitRepo\BIPProject\obj\Debug\netstandard2.0\BossItemsPlus.csproj.CoreCompileInputs.cache
+C:\Users\Computer\source\repos\BossItemsPlusGitRepo\BIPProject\obj\Debug\netstandard2.0\BossItemsPlus.sourcelink.json
+C:\Users\Computer\source\repos\BossItemsPlusGitRepo\BIPProject\obj\Debug\netstandard2.0\BossItemsPlus.dll
+C:\Users\Computer\source\repos\BossItemsPlusGitRepo\BIPProject\obj\Debug\netstandard2.0\BossItemsPlus.pdb

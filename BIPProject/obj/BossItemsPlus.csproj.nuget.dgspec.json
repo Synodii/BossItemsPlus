@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Computer\\source\\repos\\BossItemsPlus\\BossItemsPlus.csproj": {}
+    "C:\\Users\\Computer\\source\\repos\\BossItemsPlusGitRepo\\BIPProject\\BossItemsPlus.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Computer\\source\\repos\\BossItemsPlus\\BossItemsPlus.csproj": {
+    "C:\\Users\\Computer\\source\\repos\\BossItemsPlusGitRepo\\BIPProject\\BossItemsPlus.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Computer\\source\\repos\\BossItemsPlus\\BossItemsPlus.csproj",
+        "projectUniqueName": "C:\\Users\\Computer\\source\\repos\\BossItemsPlusGitRepo\\BIPProject\\BossItemsPlus.csproj",
         "projectName": "BossItemsPlus",
-        "projectPath": "C:\\Users\\Computer\\source\\repos\\BossItemsPlus\\BossItemsPlus.csproj",
+        "projectPath": "C:\\Users\\Computer\\source\\repos\\BossItemsPlusGitRepo\\BIPProject\\BossItemsPlus.csproj",
         "packagesPath": "C:\\Users\\Computer\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Computer\\source\\repos\\BossItemsPlus\\obj\\",
+        "outputPath": "C:\\Users\\Computer\\source\\repos\\BossItemsPlusGitRepo\\BIPProject\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Computer\\AppData\\Roaming\\NuGet\\NuGet.Config",
