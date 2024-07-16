@@ -5,6 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assetbundle\morebossitems" />
+    <None Remove="build\morebossitems" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assetbundle\morebossitems" />
+    <EmbeddedResource Include="build\morebossitems" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MMHOOK.RoR2" Version="2022.4.19" />
     <PackageReference Include="R2API" Version="4.4.1" />
     <PackageReference Include="RiskOfRain2.GameLibs" Version="1.2.4-r.0" />

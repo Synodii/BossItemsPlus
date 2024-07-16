@@ -16,8 +16,8 @@ namespace BossItemsPlus
     [R2APISubmoduleDependency(nameof(ItemAPI), nameof(LanguageAPI), nameof(EliteAPI))]
     public class Main : BaseUnityPlugin
     {
-        public const string ModGuid = "com.Synodii.BossItemsPlus";
-        public const string ModName = "BossItemsPlus";
+        public const string ModGuid = "com.Synodii.MoreBossItems";
+        public const string ModName = "MoreBossItems";
         public const string ModVer = "0.0.1";
 
         public static AssetBundle MainAssets;
@@ -36,7 +36,7 @@ namespace BossItemsPlus
             // Look here for info on how to set these up: https://github.com/KomradeSpectre/AetheriumMod/blob/rewrite-master/Tutorials/Item%20Mod%20Creation.md#unity-project
             // (This is a bit old now, but the information on setting the unity asset bundle should be the same.)
 
-            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("morebossitems"))
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("bossitemsplus"))
             {
                 MainAssets = AssetBundle.LoadFromStream(stream);
             }
