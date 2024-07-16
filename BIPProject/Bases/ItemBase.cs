@@ -1,22 +1,16 @@
 ﻿using BepInEx.Configuration;
-using MonoMod.Cil;
-using R2API;
 using RoR2;
+using R2API;
 using System;
-using System.Text;
-using System.Linq;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
-using RoR2.Achievements;
-using HarmonyLib;
 using On.RoR2.Items;
+using System.Linq;
+using HarmonyLib;
 
 namespace BossItemsPlus.Bases
 {
-    // The directly below is entirely from TILER2 API (by ThinkInvis) specifically the Item module. Utilized to implement instancing for classes.
-    // TILER2 API can be found at the following places:
-    // https://github.com/ThinkInvis/RoR2-TILER2
-    // https://thunderstore.io/package/ThinkInvis/TILER2/
 
     public abstract class ItemBase<T> : ItemBase where T : ItemBase<T>
     {
@@ -31,38 +25,39 @@ namespace BossItemsPlus.Bases
     public abstract class ItemBase
     {
         public abstract string ItemName { get; }
+
+        public string ConfigItemName
+        {
+            get
+            {
+                return ItemName.Replace("\'", "");
+            }
+        }
         public abstract string ItemLangTokenName { get; }
         public abstract string ItemPickupDesc { get; }
         public abstract string ItemFullDescription { get; }
         public abstract string ItemLore { get; }
 
-        public abstract ItemTier Tier { get; }
-        public virtual ItemTag[] ItemTags { get; set; } = new ItemTag[] { };
+        public virtual ItemTierDef ModdedTierDef { get; } = null;
 
-        public abstract GameObject ItemModel { get; }
-        public abstract Sprite ItemIcon { get; }
+        public abstract ItemTier Tier { get; }
+        public virtual ItemTag[] ItemTags { get; } = new ItemTag[] { };
+
+        public virtual GameObject ItemModel { get; } = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
+        public virtual Sprite ItemIcon { get; } = Resources.Load<Sprite>("Textures/MiscIcons/texMysteryIcon");
+
+        public virtual bool CanRemove { get; } = true;
+        public virtual bool Hidden { get; } = false;
+        public bool AIBlacklisted { get; internal set; }
+        public bool PrinterBlacklisted { get; internal set; }
+
+        public virtual string[] CorruptsItem { get; set; } = null;
 
         public ItemDef ItemDef;
 
-        public virtual bool CanRemove { get; } = true;
-
-        public virtual bool AIBlacklisted { get; set; } = false;
-
-        /// <summary>
-        /// This method structures your code execution of this class. An example implementation inside of it would be:
-        /// <para>CreateConfig(config);</para>
-        /// <para>CreateLang();</para>
-        /// <para>CreateItem();</para>
-        /// <para>Hooks();</para>
-        /// <para>This ensures that these execute in this order, one after another, and is useful for having things available to be used in later methods.</para>
-        /// <para>P.S. CreateItemDisplayRules(); does not have to be called in this, as it already gets called in CreateItem();</para>
-        /// </summary>
-        /// <param name="config">The config file that will be passed into this from the main class.</param>
         public abstract void Init(ConfigFile config);
 
-        public virtual void CreateConfig(ConfigFile config) { }
-
-        protected virtual void CreateLang()
+        protected void CreateLang()
         {
             LanguageAPI.Add("ITEM_" + ItemLangTokenName + "_NAME", ItemName);
             LanguageAPI.Add("ITEM_" + ItemLangTokenName + "_PICKUP", ItemPickupDesc);
@@ -71,13 +66,9 @@ namespace BossItemsPlus.Bases
         }
 
         public abstract ItemDisplayRuleDict CreateItemDisplayRules();
+
         protected void CreateItem()
         {
-            if (AIBlacklisted)
-            {
-                ItemTags = new List<ItemTag>(ItemTags) { ItemTag.AIBlacklist }.ToArray();
-            }
-
             ItemDef = ScriptableObject.CreateInstance<ItemDef>();
             ItemDef.name = "ITEM_" + ItemLangTokenName;
             ItemDef.nameToken = "ITEM_" + ItemLangTokenName + "_NAME";
@@ -86,26 +77,30 @@ namespace BossItemsPlus.Bases
             ItemDef.loreToken = "ITEM_" + ItemLangTokenName + "_LORE";
             ItemDef.pickupModelPrefab = ItemModel;
             ItemDef.pickupIconSprite = ItemIcon;
-            ItemDef.hidden = false;
+            ItemDef.hidden = Hidden;
             ItemDef.canRemove = CanRemove;
-            ItemDef.deprecatedTier = Tier;
-
-            if (ItemTags.Length > 0) { ItemDef.tags = ItemTags; }
-
-            ItemAPI.Add(new CustomItem(ItemDef, CreateItemDisplayRules()));
+            //ItemDef.tier = Tier;
+            if (ModdedTierDef == null)
+                ItemDef.deprecatedTier = Tier;
+            else
+                ItemDef._itemTierDef = ModdedTierDef;
+            ItemDef.tags = ItemTags;
+            //ItemTag.WorldUnique
+            var itemDisplayRuleDict = CreateItemDisplayRules();
+            ItemAPI.Add(new CustomItem(ItemDef, itemDisplayRuleDict));
         }
 
-        public static Dictionary<ItemBase, bool> ItemStatusDictionary = new Dictionary<ItemBase, bool>();
-        public static Dictionary<EquipmentBase, bool> EquipmentStatusDictionary = new Dictionary<EquipmentBase, bool>();
-        public virtual void Hooks() { }
 
-        //Based on ThinkInvis' methods
+
+        public abstract void Hooks();
+
         public int GetCount(CharacterBody body)
         {
             if (!body || !body.inventory) { return 0; }
 
             return body.inventory.GetItemCount(ItemDef);
         }
+
         public int GetCount(CharacterMaster master)
         {
             if (!master || !master.inventory) { return 0; }
@@ -113,11 +108,48 @@ namespace BossItemsPlus.Bases
             return master.inventory.GetItemCount(ItemDef);
         }
 
-        public int GetCountSpecific(CharacterBody body, ItemDef itemDef)
+        internal static void RegisterVoidPairings(ContagiousItemManager.orig_Init orig)
         {
-            if (!body || !body.inventory) { return 0; }
+            var voidTiers = new ItemTier[]{
+                ItemTier.VoidBoss,
+                ItemTier.VoidTier1,
+                ItemTier.VoidTier2,
+                ItemTier.VoidTier3};
 
-            return body.inventory.GetItemCount(itemDef);
+            foreach (KeyValuePair<ItemBase, bool> itemPair in Main.ItemStatusDictionary)
+            {
+                if (itemPair.Value == true)
+                {
+                    var item = itemPair.Key;
+
+                    if (item.ItemDef && voidTiers.Any(x => item.ItemDef.tier == x))
+                    {
+                        for (int i = 0; i < item.CorruptsItem.Count(); i++)
+                        {
+                            var itemToCorrupt = ItemCatalog.itemDefs.Where(x => x.nameToken == item.CorruptsItem[i]).FirstOrDefault();
+                            if (!itemToCorrupt)
+                            {
+                                Main.ModLogger.LogError($"Tried to add {item.ItemName} in a Void item tier but no relationship was set for what it corrupts or could not be found. Aborting!");
+                                continue;
+                            }
+
+                            var pair = new ItemDef.Pair[]
+                            {
+                            new ItemDef.Pair
+                            {
+                                itemDef1 = itemToCorrupt,
+                                itemDef2 = item.ItemDef,
+                            }
+                            };
+
+                            ItemCatalog.itemRelationships[DLC1Content.ItemRelationshipTypes.ContagiousItem] = ItemCatalog.itemRelationships[DLC1Content.ItemRelationshipTypes.ContagiousItem].AddRangeToArray(pair);
+                        }
+                    }
+                }
+            }
+            orig();
         }
     }
+
+
 }

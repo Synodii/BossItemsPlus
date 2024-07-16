@@ -1,4 +1,5 @@
-﻿using BepInEx.Configuration;
+﻿
+using BepInEx.Configuration;
 using R2API;
 using RoR2;
 using System;
@@ -27,52 +28,31 @@ namespace BossItemsPlus.Bases
         public abstract string EquipmentFullDescription { get; }
         public abstract string EquipmentLore { get; }
 
-        public abstract GameObject EquipmentModel { get; }
-        public abstract Sprite EquipmentIcon { get; }
-
-        public virtual bool AppearsInSinglePlayer { get; } = true;
-
-        public virtual bool AppearsInMultiPlayer { get; } = true;
-
-        public virtual bool CanDrop { get; } = true;
-
-        public virtual float Cooldown { get; } = 60f;
-
-        public virtual bool EnigmaCompatible { get; } = true;
-
-        public virtual bool IsBoss { get; } = false;
-
-        public virtual bool IsLunar { get; } = false;
+        public virtual GameObject EquipmentModel { get; } = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
+        public virtual Sprite EquipmentIcon { get; } = Resources.Load<Sprite>("Textures/MiscIcons/texMysteryIcon");
 
         public EquipmentDef EquipmentDef;
 
-        public abstract ItemDisplayRuleDict CreateItemDisplayRules();
+        public virtual bool AppearsInSinglePlayer { get; } = true;
+        public virtual bool AppearsInMultiPlayer { get; } = true;
+        public virtual bool CanDrop { get; } = true;
+        public virtual float Cooldown { get; } = 60f;
+        public virtual bool EnigmaCompatible { get; } = true;
+        public virtual bool IsBoss { get; } = false;
+        public virtual bool IsLunar { get; } = false;
 
-        /// <summary>
-        /// This method structures your code execution of this class. An example implementation inside of it would be:
-        /// <para>CreateConfig(config);</para>
-        /// <para>CreateLang();</para>
-        /// <para>CreateEquipment();</para>
-        /// <para>Hooks();</para>
-        /// <para>This ensures that these execute in this order, one after another, and is useful for having things available to be used in later methods.</para>
-        /// <para>P.S. CreateItemDisplayRules(); does not have to be called in this, as it already gets called in CreateEquipment();</para>
-        /// </summary>
-        /// <param name="config">The config file that will be passed into this from the main class.</param>
         public abstract void Init(ConfigFile config);
 
-        protected virtual void CreateConfig(ConfigFile config) { }
 
-
-        /// <summary>
-        /// Take care to call base.CreateLang()!
-        /// </summary>
-        protected virtual void CreateLang()
+        protected void CreateLang()
         {
             LanguageAPI.Add("EQUIPMENT_" + EquipmentLangTokenName + "_NAME", EquipmentName);
             LanguageAPI.Add("EQUIPMENT_" + EquipmentLangTokenName + "_PICKUP", EquipmentPickupDesc);
             LanguageAPI.Add("EQUIPMENT_" + EquipmentLangTokenName + "_DESCRIPTION", EquipmentFullDescription);
             LanguageAPI.Add("EQUIPMENT_" + EquipmentLangTokenName + "_LORE", EquipmentLore);
         }
+
+        public abstract ItemDisplayRuleDict CreateItemDisplayRules();
 
         protected void CreateEquipment()
         {
@@ -110,7 +90,8 @@ namespace BossItemsPlus.Bases
 
         protected abstract bool ActivateEquipment(EquipmentSlot slot);
 
-        public virtual void Hooks() { }
+        public abstract void Hooks();
+
 
         #region Targeting Setup
         //Targeting Support
@@ -120,6 +101,8 @@ namespace BossItemsPlus.Bases
         {
             Enemies,
             Friendlies,
+            Interactables,
+            Items
         }
         public virtual TargetingType TargetingTypeEnum { get; } = TargetingType.Enemies;
 
@@ -141,11 +124,17 @@ namespace BossItemsPlus.Bases
                 {
                     switch (TargetingTypeEnum)
                     {
-                        case TargetingType.Enemies:
+                        case (TargetingType.Enemies):
                             targetingComponent.ConfigureTargetFinderForEnemies(self);
                             break;
-                        case TargetingType.Friendlies:
+                        case (TargetingType.Friendlies):
                             targetingComponent.ConfigureTargetFinderForFriendlies(self);
+                            break;
+                        case (TargetingType.Interactables):
+                            targetingComponent.ConfigureTargetFinderForInteractables(self);
+                            break;
+                        case (TargetingType.Items):
+                            targetingComponent.ConfigureTargetFinderForItems(self);
                             break;
                     }
                 }
@@ -233,6 +222,22 @@ namespace BossItemsPlus.Bases
                     Invalidate();
                 }
                 Indicator.active = hurtbox;
+            }
+
+            internal void ConfigureTargetFinderForInteractables(EquipmentSlot self)
+            {
+                throw new NotImplementedException();
+            }
+
+            internal void ConfigureTargetFinderForItems(EquipmentSlot self)
+            {
+                ConfigureTargetFinderBase(self);
+
+                TargetFinder.teamMaskFilter.AddTeam(self.characterBody.teamComponent.teamIndex);
+                TargetFinder.RefreshCandidates();
+                TargetFinder.FilterOutGameObject(self.gameObject);
+                AdditionalBullseyeFunctionality(TargetFinder);
+                PlaceTargetingIndicator(TargetFinder.GetResults());
             }
         }
 

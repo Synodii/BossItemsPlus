@@ -39,7 +39,7 @@ namespace BossItemsPlus.Items
                 Hooks();
             }
 
-            public override void CreateConfig(ConfigFile config)
+            public void CreateConfig(ConfigFile config)
             {
             
             }

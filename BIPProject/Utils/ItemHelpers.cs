@@ -1,13 +1,13 @@
-﻿using BossItemsPlus.Utils.Components;
-using RoR2;
+﻿using RoR2;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace BossItemsPlus.Utils
 {
-    public static class ItemHelpers
+    internal class ItemHelpers
     {
         /// <summary>
         /// A helper that will set up the RendererInfos of a GameObject that you pass in.
@@ -16,7 +16,7 @@ namespace BossItemsPlus.Utils
         /// <param name="obj">The GameObject/Prefab that you wish to set up RendererInfos for.</param>
         /// <param name="debugmode">Do we attempt to attach a material shader controller instance to meshes in this?</param>
         /// <returns>Returns an array full of RendererInfos for GameObject.</returns>
-        public static CharacterModel.RendererInfo[] ItemDisplaySetup(GameObject obj, bool debugmode = false)
+        public static CharacterModel.RendererInfo[] ItemDisplaySetup(GameObject obj, bool IgnoreOverlays = false, bool debugmode = false)
         {
 
             List<Renderer> AllRenderers = new List<Renderer>();
@@ -33,8 +33,8 @@ namespace BossItemsPlus.Utils
             {
                 if (debugmode)
                 {
-                    var controller = AllRenderers[i].gameObject.AddComponent<MaterialControllerComponents.HGControllerFinder>();
-                    controller.Renderer = AllRenderers[i];
+                    // var controller = AllRenderers[i].gameObject.AddComponent<MaterialControllerComponents.HGControllerFinder>();
+                    //controller.Renderer = AllRenderers[i];
                 }
 
                 renderInfos[i] = new CharacterModel.RendererInfo
@@ -87,12 +87,6 @@ namespace BossItemsPlus.Utils
             return String.Join("\n", Manifest);
         }
 
-        /// <summary>
-        /// Refreshes stacks of a timed buff on a body for a specified duration. Will refresh the entire stack pool of the buff at once.
-        /// </summary>
-        /// <param name="body">The body to check.</param>
-        /// <param name="buffDef">The buff to refresh.</param>
-        /// <param name="duration">The duration all stacks should have.</param>
         public static void RefreshTimedBuffs(CharacterBody body, BuffDef buffDef, float duration)
         {
             if (!body || body.GetBuffCount(buffDef) <= 0) { return; }
@@ -105,14 +99,6 @@ namespace BossItemsPlus.Utils
             }
         }
 
-        /// <summary>
-        /// Refreshes stacks of a timed buff on a body for a specified duration, but spreads their time to decay after a set start duration and interval afterwards. 
-        /// <para>Will refresh the entire stack pool of the buff at once.</para>
-        /// </summary>
-        /// <param name="body">The body to check.</param>
-        /// <param name="buffDef">The buff to refresh.</param>
-        /// <param name="taperStart">How long should we wait before beginning to decay buffs?</param>
-        /// <param name="taperDuration">The duration between stack decay.</param>
         public static void RefreshTimedBuffs(CharacterBody body, BuffDef buffDef, float taperStart, float taperDuration)
         {
             if (!body || body.GetBuffCount(buffDef) <= 0) { return; }
@@ -127,17 +113,8 @@ namespace BossItemsPlus.Utils
             }
         }
 
-        /// <summary>
-        /// Adds a timed buff to a body if a Dot for it does not exist, else inflicts said dot on the specified body.
-        /// </summary>
-        /// <param name="buff">The buffdef to apply to the body, or find the dotcontroller of.</param>
-        /// <param name="duration">The duration of the buff or dot.</param>
-        /// <param name="stackCount">The amount of buff stacks to apply.</param>
-        /// <param name="body">The body to apply the buff or dot to.</param>
         public static void AddBuffAndDot(BuffDef buff, float duration, int stackCount, RoR2.CharacterBody body)
         {
-            if (!NetworkServer.active) { return; }
-
             RoR2.DotController.DotIndex index = (RoR2.DotController.DotIndex)Array.FindIndex(RoR2.DotController.dotDefs, (dotDef) => dotDef.associatedBuff == buff);
             for (int y = 0; y < stackCount; y++)
             {
@@ -147,21 +124,67 @@ namespace BossItemsPlus.Utils
                 }
                 else
                 {
-                    body.AddTimedBuff(buff.buffIndex, duration);
+                    if (NetworkServer.active)
+                    {
+                        body.AddTimedBuff(buff.buffIndex, duration);
+                    }
                 }
             }
         }
 
-        /// <summary>
-        /// Finds the associated DotController from a buff, if applicable.
-        /// </summary>
-        /// <param name="buff">The buff to check all dots against.</param>
-        /// <returns>A dotindex of the DotController the target buff is associated with, else, it will return an invalid index.</returns>
         public static DotController.DotIndex FindAssociatedDotForBuff(BuffDef buff)
         {
             RoR2.DotController.DotIndex index = (RoR2.DotController.DotIndex)Array.FindIndex(RoR2.DotController.dotDefs, (dotDef) => dotDef.associatedBuff == buff);
 
             return index;
         }
+
+        public static T[] GetRandomSelectionFromArray<T>(List<T> itemList, int maxCount, Xoroshiro128Plus rng)
+        {
+            int selectionSize = Math.Min(itemList.Count, maxCount);
+            T[] selection = new T[selectionSize];
+            HashSet<T> usedItems = new HashSet<T>();
+
+            for (int i = 0; i < selectionSize; i++)
+            {
+                T selectedItem;
+                do
+                {
+                    selectedItem = itemList[rng.RangeInt(0, itemList.Count)];
+                } while (usedItems.Contains(selectedItem));
+                selection[i] = selectedItem;
+                usedItems.Add(selectedItem);
+            }
+            //(T[])Convert.ChangeType(value, typeof(T[]));
+            return selection;
+        }
+
+        public static List<ItemDef> ItemDefsWithTier(ItemTierDef itemTierDef)
+        {
+            HashSet<ItemDef> items = new HashSet<ItemDef>();
+            foreach (ItemDef itemDef in ItemCatalog.allItemDefs)
+            {
+                if (itemDef.itemIndex != ItemIndex.None && itemDef.tier == itemTierDef.tier) //&& !itemDef.tags.Contains(ItemTag.WorldUnique))
+                {
+                    items.Add(itemDef);
+                }
+            }
+            return items.ToList<ItemDef>();
+        }
+
+        public static List<PickupDef> PickupDefsWithTier(ItemTierDef itemTierDef)
+        {
+            HashSet<PickupDef> items = new HashSet<PickupDef>();
+            foreach (PickupDef pickupDef in PickupCatalog.allPickups)
+            {
+                if (pickupDef.itemIndex != ItemIndex.None && pickupDef.itemTier == itemTierDef.tier)// && !itemDef.tags.Contains(ItemTag.WorldUnique))
+                {
+                    items.Add(pickupDef);
+                }
+            }
+            return items.ToList<PickupDef>();
+        }
+
+        //public static PickupIndex[] ItemIndexToPickupIndex
     }
 }

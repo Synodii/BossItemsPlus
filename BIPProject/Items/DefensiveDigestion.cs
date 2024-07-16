@@ -28,9 +28,9 @@ namespace BossItemsPlus.Items
 
         public override ItemTag[] ItemTags => new ItemTag[] { ItemTag.Damage };
 
-        public override GameObject ItemModel => Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Mystery/PickupMystery.prefab").WaitForCompletion();
+        public override GameObject ItemModel => Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
 
-        public override Sprite ItemIcon => Addressables.LoadAssetAsync<Sprite>("RoR2/Base/Common/MiscIcons/texMysteryIcon.png").WaitForCompletion();
+        public override Sprite ItemIcon => Resources.Load<Sprite>("Textures/MiscIcons/texMysteryIcon");
 
         public static float projectileDamage;
         //public static float poolDamage;
@@ -52,7 +52,7 @@ namespace BossItemsPlus.Items
             Hooks();
         }
 
-        public override void CreateConfig(ConfigFile config)
+        public void CreateConfig(ConfigFile config)
         {
             projectileDamage = config.Bind<float>("Item: " + ItemName, "Projectile Damage", 3f, "How much damage does the acid ball direct hit do?").Value;
             //poolDamage = config.Bind<float>("Item: " + ItemName, "Pool Damage", 2f, "How much damage does the acid pool do per second?").Value;
