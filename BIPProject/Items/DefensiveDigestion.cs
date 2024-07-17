@@ -9,6 +9,8 @@ using System.Text;
 using UnityEngine;
 using BossItemsPlus.Bases;
 using UnityEngine.Networking;
+using BossItemsPlus;
+using BossItemsPlus.Utils;
 
 namespace BossItemsPlus.Items
 {
@@ -34,12 +36,13 @@ namespace BossItemsPlus.Items
 
         public static float projectileDamage;
         //public static float poolDamage;
+        //public static int stackprojectileCount;
         public static int baseprojectileCount;
         public static float stackChance;
         public static float baseChance;
         public static float yawSpread = 20f;
         private Ray aimRay;
-        private float duration;
+        //private float duration;
         public static float arcAngle = 5f;
 
 
@@ -102,7 +105,7 @@ namespace BossItemsPlus.Items
                     {
                         Ray ray = this.aimRay;
                         ray.origin = this.aimRay.GetPoint(6f);
-                        RaycastHit raycastHit;
+                        //RaycastHit raycastHit;
                         var footPosition = master.transform.position;
                         var fpi = new FireProjectileInfo
                         {
